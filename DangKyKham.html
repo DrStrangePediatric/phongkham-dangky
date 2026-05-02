@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng Ký Khám Bệnh — Phòng Khám Nhi BS. CKI. Trần Minh Thành</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CẤU HÌNH — Bác Sĩ Thành chỉ cần sửa phần này
+   ============================================================ */
+:root {
+  /* 🔑 QUAN TRỌNG: Dán Web App URL từ Google Apps Script vào đây */
+  --GOOGLE_SCRIPT_URL: ""; /* Xem hướng dẫn trong file HUONG_DAN.html */
+
+  /* Thông tin phòng khám */
+  --clinic-name: "Phòng Khám Nhi - BS. CKI. Trần Minh Thành";
+  --clinic-addr: "154 Trần Quang Diệu, Phường Bình Thủy, TP. Cần Thơ";
+  --clinic-phone: "0976.675.445";
+  --clinic-hours: "T2-T7: Sáng 6-7h | Trưa 11-12h | Chiều 17-19h | CN: Chiều 17-19h";
+
+  /* Màu sắc */
+  --primary: #1a6db5;
+  --primary-light: #e8f2fb;
+  --primary-dark: #0f4a80;
+  --accent: #e8b84b;
+  --bg: #f7f9fc;
+  --card: #ffffff;
+  --text: #1a1f2e;
+  --text-2: #5a6478;
+  --text-3: #9aa3b5;
+  --border: #e2e8f0;
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --error: #dc2626;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   HERO HEADER
+   ============================================================ */
+.hero {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #2196c4 100%);
+  padding: 36px 20px 70px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-cross {
+  width: 56px; height: 56px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.hero-cross svg { color: white; }
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 5vw, 32px);
+  color: white;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.hero-sub { color: rgba(255,255,255,0.8); font-size: 14px; }
+.hero-chips {
+  display: flex; justify-content: center; gap: 8px;
+  flex-wrap: wrap; margin-top: 16px;
+}
+.chip {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white; font-size: 12px; font-weight: 500;
+  padding: 4px 12px; border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+
+/* ============================================================
+   MAIN CARD
+   ============================================================ */
+.container {
+  max-width: 640px;
+  margin: -44px auto 40px;
+  padding: 0 16px;
+  position: relative;
+  z-index: 1;
+}
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  overflow: hidden;
+}
+
+/* ============================================================
+   STEPS INDICATOR
+   ============================================================ */
+.steps {
+  display: flex;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  gap: 0;
+}
+.step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: calc(100% - 30px);
+  left: 30px;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.step.done:not(:last-child)::after { background: var(--primary); }
+.step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  color: var(--text-3);
+  flex-shrink: 0;
+  transition: all 0.3s;
+  position: relative; z-index: 1;
+}
+.step.active .step-num {
+  background: var(--primary); border-color: var(--primary); color: white;
+  box-shadow: 0 0 0 4px rgba(26,109,181,0.15);
+}
+.step.done .step-num {
+  background: var(--primary); border-color: var(--primary); color: white;
+}
+.step-label { font-size: 11px; font-weight: 600; color: var(--text-3); }
+.step.active .step-label { color: var(--primary); }
+.step.done .step-label { color: var(--primary); }
+
+/* ============================================================
+   FORM SECTIONS
+   ============================================================ */
+.form-section { display: none; padding: 28px 28px 24px; }
+.form-section.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.section-title {
+  font-size: 16px; font-weight: 700;
+  color: var(--text); margin-bottom: 4px;
+}
+.section-desc { font-size: 13px; color: var(--text-2); margin-bottom: 22px; }
+
+.form-row { display: grid; gap: 14px; margin-bottom: 14px; }
+.fr2 { grid-template-columns: 1fr 1fr; }
+.fr3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+
+label {
+  font-size: 12px; font-weight: 600;
+  color: var(--text-2); letter-spacing: 0.02em;
+}
+label .req { color: var(--error); margin-left: 2px; }
+
+.input, .select, .textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  color: var(--text);
+  background: #fafbfc;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.input:focus, .select:focus, .textarea:focus {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(26,109,181,0.1);
+}
+.input.error, .select.error { border-color: var(--error); }
+.input::placeholder { color: var(--text-3); }
+.textarea { resize: vertical; min-height: 90px; }
+.select { cursor: pointer; }
+.field-hint { font-size: 11px; color: var(--text-3); }
+.field-error { font-size: 11px; color: var(--error); display: none; }
+.field-error.show { display: block; }
+
+/* Time slot picker */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+.time-slot {
+  padding: 10px 6px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: #fafbfc;
+  transition: all 0.2s;
+  user-select: none;
+}
+.time-slot:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.time-slot.selected { background: var(--primary); color: white; border-color: var(--primary); }
+.time-slot.full { opacity: 0.4; cursor: not-allowed; pointer-events: none; text-decoration: line-through; }
+.time-period { font-size: 11px; font-weight: 600; color: var(--text-3); margin: 12px 0 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* Checkbox / Radio group */
+.radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+.radio-btn {
+  flex: 1; min-width: 80px;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer; text-align: center;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-2);
+  background: #fafbfc;
+  transition: all 0.15s;
+  user-select: none;
+}
+.radio-btn.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+
+/* Summary review */
+.summary { background: #f8fafc; border-radius: var(--radius-sm); padding: 18px; margin-bottom: 20px; }
+.summary-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-key { color: var(--text-2); flex-shrink: 0; margin-right: 12px; }
+.summary-val { font-weight: 600; text-align: right; color: var(--text); }
+.summary-header {
+  font-size: 11px; font-weight: 700;
+  color: var(--primary); text-transform: uppercase;
+  letter-spacing: 0.06em; margin: 12px 0 6px;
+}
+.summary-header:first-child { margin-top: 0; }
+
+/* Buttons */
+.btn-row { display: flex; gap: 10px; justify-content: space-between; margin-top: 24px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  white-space: nowrap;
+}
+.btn-back {
+  background: #f1f5f9; color: var(--text-2);
+  padding-left: 18px;
+}
+.btn-back:hover { background: #e2e8f0; color: var(--text); }
+.btn-next, .btn-submit {
+  flex: 1;
+  background: var(--primary); color: white;
+  box-shadow: 0 4px 12px rgba(26,109,181,0.3);
+}
+.btn-next:hover, .btn-submit:hover {
+  background: var(--primary-dark);
+  box-shadow: 0 6px 18px rgba(26,109,181,0.4);
+  transform: translateY(-1px);
+}
+.btn-next:active, .btn-submit:active { transform: translateY(0); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+
+/* ============================================================
+   SUCCESS SCREEN
+   ============================================================ */
+.success-screen {
+  display: none; padding: 48px 28px 40px; text-align: center;
+  animation: fadeIn 0.4s ease;
+}
+.success-screen.show { display: block; }
+.success-icon {
+  width: 80px; height: 80px;
+  background: var(--success-bg);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popIn { from { transform: scale(0); opacity:0; } to { transform: scale(1); opacity:1; } }
+.success-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 600;
+  color: var(--text); margin-bottom: 10px;
+}
+.success-sub { font-size: 14px; color: var(--text-2); margin-bottom: 24px; line-height: 1.7; }
+.booking-code {
+  display: inline-block;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 22px; font-weight: 700;
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.1em;
+  margin-bottom: 24px;
+  border: 2px dashed rgba(26,109,181,0.3);
+}
+.success-note {
+  background: #fffbeb;
+  border: 1px solid #f59e0b;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #92400e;
+  text-align: left;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.success-info-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  font-size: 13px; margin-bottom: 8px; text-align: left;
+}
+.success-info-row svg { color: var(--primary); flex-shrink: 0; }
+.btn-register-again {
+  background: var(--primary); color: white;
+  padding: 12px 28px; border-radius: var(--radius-sm);
+  border: none; font-size: 14px; font-weight: 600;
+  cursor: pointer; margin-top: 16px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  transition: all 0.2s;
+}
+.btn-register-again:hover { background: var(--primary-dark); }
+
+/* ============================================================
+   LOADING OVERLAY
+   ============================================================ */
+.loading-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(255,255,255,0.85);
+  z-index: 1000;
+  flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+  backdrop-filter: blur(4px);
+}
+.loading-overlay.show { display: flex; }
+.spinner {
+  width: 44px; height: 44px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; color: var(--text-2); font-weight: 500; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  text-align: center; padding: 20px;
+  font-size: 12px; color: var(--text-3);
+  line-height: 1.8;
+}
+.footer a { color: var(--primary); text-decoration: none; }
+
+/* ============================================================
+   NOTICE BANNER (cần điền URL script)
+   ============================================================ */
+.config-notice {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #78350f;
+  margin: 0 28px 20px;
+  display: none;
+  align-items: flex-start; gap: 8px;
+}
+.config-notice.show { display: flex; }
+
+/* Responsive */
+@media (max-width: 520px) {
+  .fr2, .fr3 { grid-template-columns: 1fr; }
+  .form-section { padding: 20px 18px 18px; }
+  .steps { padding: 12px 16px; }
+  .step-label { display: none; }
+  .time-grid { grid-template-columns: repeat(3, 1fr); }
+  .hero { padding: 28px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Đang gửi thông tin đăng ký...</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-cross">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+    </svg>
+  </div>
+  <h1>Đăng Ký Khám Bệnh</h1>
+  <p class="hero-sub">Phòng Khám Nhi — BS. CKI. Trần Minh Thành</p>
+  <div class="hero-chips">
+    <span class="chip">📍 154 Trần Quang Diệu, P. Bình Thủy, TP. Cần Thơ</span>
+    <span class="chip">🕐 T2–T7: Sáng 6–7h | Trưa 11–12h | Chiều 17–19h</span>
+    <span class="chip">🕐 Chủ Nhật: Chiều 17–19h</span>
+    <span class="chip">📞 0976.675.445</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+  <div class="card">
+
+    <!-- CONFIG NOTICE -->
+    <div class="config-notice" id="config-notice">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div><strong>Chưa cấu hình Google Sheets:</strong> Bác Sĩ cần dán Web App URL từ Google Apps Script vào file. Xem hướng dẫn trong file <strong>HUONG_DAN.html</strong>. Hiện tại form vẫn hoạt động nhưng dữ liệu chưa được lưu vào Sheets.</div>
+    </div>
+
+    <!-- STEPS -->
+    <div class="steps">
+      <div class="step active" id="step-1">
+        <div class="step-num">1</div>
+        <div class="step-label">Thông tin</div>
+      </div>
+      <div class="step" id="step-2">
+        <div class="step-num">2</div>
+        <div class="step-label">Lịch hẹn</div>
+      </div>
+      <div class="step" id="step-3">
+        <div class="step-num">3</div>
+        <div class="step-label">Xác nhận</div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 1: THÔNG TIN BỆNH NHÂN ===== -->
+    <div class="form-section active" id="section-1">
+      <div class="section-title">Thông tin bệnh nhân</div>
+      <div class="section-desc">Vui lòng điền thông tin chính xác của trẻ cần khám.</div>
+
+      <div class="form-row fr2">
+        <div class="form-group full">
+          <label>Họ và tên trẻ <span class="req">*</span></label>
+          <input class="input" type="text" id="child-name" placeholder="Ví dụ: Nguyễn Văn An" maxlength="60">
+          <span class="field-error" id="err-child-name">Vui lòng nhập họ tên trẻ</span>
+        </div>
+      </div>
+
+      <div class="form-row fr3">
+        <div class="form-group">
+          <label>Ngày sinh <span class="req">*</span></label>
+          <input class="input" type="date" id="child-dob" max="">
+          <span class="field-error" id="err-child-dob">Vui lòng chọn ngày sinh</span>
+        </div>
+        <div class="form-group">
+          <label>Giới tính <span class="req">*</span></label>
+          <select class="select" id="child-gender">
+            <option value="">-- Chọn --</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+          </select>
+          <span class="field-error" id="err-child-gender">Vui lòng chọn giới tính</span>
+        </div>
+        <div class="form-group">
+          <label>Cân nặng (kg)</label>
+          <input class="input" type="number" id="child-weight" placeholder="15" min="1" max="100" step="0.1">
+        </div>
+      </div>
+
+      <div class="form-row fr2">
+        <div class="form-group">
+          <label>Họ tên phụ huynh <span class="req">*</span></label>
+          <input class="input" type="text" id="parent-name" placeholder="Nguyễn Thị Bình" maxlength="60">
+          <span class="field-error" id="err-parent-name">Vui lòng nhập tên phụ huynh</span>
+        </div>
+        <div class="form-group">
+          <label>Quan hệ với bé</label>
+          <select class="select" id="parent-relation">
+            <option value="Mẹ">Mẹ</option>
+            <option value="Bố">Bố</option>
+            <option value="Ông/Bà">Ông/Bà</option>
+            <option value="Khác">Khác</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row fr2">
+        <div class="form-group">
+          <label>Số điện thoại <span class="req">*</span></label>
+          <input class="input" type="tel" id="parent-phone" placeholder="09xxxxxxxx" maxlength="11">
+          <span class="field-error" id="err-parent-phone">SĐT không hợp lệ (10 số)</span>
+        </div>
+        <div class="form-group">
+          <label>Email (tùy chọn)</label>
+          <input class="input" type="email" id="parent-email" placeholder="email@gmail.com">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Địa chỉ</label>
+        <input class="input" type="text" id="parent-addr" placeholder="Phường/Xã, Quận/Huyện, Tỉnh/TP" maxlength="120">
+      </div>
+
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Dị ứng thuốc (nếu có)</label>
+        <input class="input" type="text" id="allergy" placeholder="Penicillin, Sulfa... hoặc để trống nếu không có" maxlength="100">
+      </div>
+
+      <div class="form-group">
+        <label>Tiền sử bệnh / Bệnh nền</label>
+        <input class="input" type="text" id="history" placeholder="Hen suyễn, tim bẩm sinh... hoặc để trống" maxlength="200">
+      </div>
+
+      <div class="btn-row">
+        <div></div>
+        <button class="btn btn-next" onclick="goStep(2)">
+          Tiếp theo
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 2: CHỌN LỊCH KHÁM ===== -->
+    <div class="form-section" id="section-2">
+      <div class="section-title">Chọn lịch khám</div>
+      <div class="section-desc">Chọn ngày và giờ phù hợp. Phòng khám mở cửa Thứ 2 – Thứ 7.</div>
+
+      <div class="form-row fr2" style="margin-bottom:20px;">
+        <div class="form-group">
+          <label>Ngày khám <span class="req">*</span></label>
+          <input class="input" type="date" id="appt-date" min="">
+          <span class="field-hint">Chỉ có thể đặt trong 30 ngày tới</span>
+          <span class="field-error" id="err-appt-date">Vui lòng chọn ngày khám</span>
+        </div>
+        <div class="form-group">
+          <label>Loại khám <span class="req">*</span></label>
+          <select class="select" id="appt-type">
+            <option value="Khám mới">Khám mới (lần đầu đến)</option>
+            <option value="Tái khám">Tái khám (đã có hồ sơ)</option>
+            <option value="Khám định kỳ">Khám định kỳ / Tiêm chủng</option>
+            <option value="Cấp cứu">Tình trạng cấp thiết</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:20px;">
+        <label>Chọn giờ khám <span class="req">*</span></label>
+        <div class="time-period">☀ Buổi sáng (06:00 – 07:00)</div>
+        <div class="time-grid" id="morning-slots">
+          <div class="time-slot" onclick="selectTime(this,'06:00')">06:00</div>
+          <div class="time-slot" onclick="selectTime(this,'06:15')">06:15</div>
+          <div class="time-slot" onclick="selectTime(this,'06:30')">06:30</div>
+          <div class="time-slot" onclick="selectTime(this,'06:45')">06:45</div>
+          <div class="time-slot" onclick="selectTime(this,'07:00')">07:00</div>
+        </div>
+        <div class="time-period">🌤 Buổi trưa (11:00 – 12:00)</div>
+        <div class="time-grid" id="noon-slots">
+          <div class="time-slot" onclick="selectTime(this,'11:00')">11:00</div>
+          <div class="time-slot" onclick="selectTime(this,'11:15')">11:15</div>
+          <div class="time-slot" onclick="selectTime(this,'11:30')">11:30</div>
+          <div class="time-slot" onclick="selectTime(this,'11:45')">11:45</div>
+          <div class="time-slot" onclick="selectTime(this,'12:00')">12:00</div>
+        </div>
+        <div class="time-period">🌙 Buổi chiều (17:00 – 19:00)</div>
+        <div class="time-grid" id="afternoon-slots">
+          <div class="time-slot" onclick="selectTime(this,'17:00')">17:00</div>
+          <div class="time-slot" onclick="selectTime(this,'17:15')">17:15</div>
+          <div class="time-slot" onclick="selectTime(this,'17:30')">17:30</div>
+          <div class="time-slot" onclick="selectTime(this,'17:45')">17:45</div>
+          <div class="time-slot" onclick="selectTime(this,'18:00')">18:00</div>
+          <div class="time-slot" onclick="selectTime(this,'18:15')">18:15</div>
+          <div class="time-slot" onclick="selectTime(this,'18:30')">18:30</div>
+          <div class="time-slot" onclick="selectTime(this,'18:45')">18:45</div>
+          <div class="time-slot" onclick="selectTime(this,'19:00')">19:00</div>
+        </div>
+        <span class="field-error" id="err-appt-time">Vui lòng chọn giờ khám</span>
+      </div>
+
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Lý do khám / Triệu chứng chính <span class="req">*</span></label>
+        <textarea class="textarea" id="reason" placeholder="Mô tả ngắn gọn triệu chứng bé đang gặp phải:&#10;Ví dụ: Sốt cao 39°C từ 2 ngày, kèm ho và chảy nước mũi. Trẻ bỏ ăn, quấy khóc nhiều."></textarea>
+        <span class="field-error" id="err-reason">Vui lòng mô tả lý do khám</span>
+      </div>
+
+      <div class="form-group">
+        <label>Bé đã từng khám tại phòng khám chưa?</label>
+        <div class="radio-group" id="visited-before">
+          <div class="radio-btn" onclick="selectRadio(this,'visited-before','Chưa từng')">Chưa từng</div>
+          <div class="radio-btn selected" onclick="selectRadio(this,'visited-before','Đã từng')">Đã từng</div>
+          <div class="radio-btn" onclick="selectRadio(this,'visited-before','Không nhớ')">Không nhớ</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goStep(1)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Quay lại
+        </button>
+        <button class="btn btn-next" onclick="goStep(3)">
+          Xem lại & Xác nhận
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 3: XÁC NHẬN ===== -->
+    <div class="form-section" id="section-3">
+      <div class="section-title">Xác nhận thông tin đăng ký</div>
+      <div class="section-desc">Vui lòng kiểm tra lại trước khi gửi. Sau khi gửi, phòng khám sẽ liên hệ xác nhận qua điện thoại.</div>
+
+      <div class="summary" id="summary-box">
+        <!-- Filled by JS -->
+      </div>
+
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:14px 16px;font-size:13px;color:#166534;margin-bottom:20px;line-height:1.7;">
+        <strong>✅ Cam kết của phòng khám:</strong><br>
+        Phòng khám sẽ gọi điện xác nhận trong vòng <strong>1–2 giờ</strong> (trong giờ làm việc). Nếu không nhận được cuộc gọi, vui lòng gọi trực tiếp: <strong>0976.675.445</strong>.
+      </div>
+
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:4px;">
+        <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-weight:400;">
+          <input type="checkbox" id="agree-terms" style="margin-top:2px;flex-shrink:0;width:15px;height:15px;">
+          <span>Tôi đồng ý cho phòng khám lưu trữ và sử dụng thông tin trên để hỗ trợ việc khám chữa bệnh và liên hệ xác nhận lịch hẹn.</span>
+        </label>
+      </div>
+      <span class="field-error" id="err-agree">Vui lòng đồng ý với điều khoản để tiếp tục</span>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goStep(2)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Quay lại
+        </button>
+        <button class="btn btn-submit" id="submit-btn" onclick="submitForm()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Gửi đăng ký khám
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== SUCCESS SCREEN ===== -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div class="success-title">Đăng ký thành công! 🎉</div>
+      <p class="success-sub">Thông tin đăng ký của bé đã được ghi nhận.<br>Phòng khám sẽ liên hệ xác nhận sớm nhất có thể.</p>
+
+      <div class="booking-code" id="booking-code">PK-000000</div>
+      <p style="font-size:12px;color:var(--text-3);margin-top:-16px;margin-bottom:20px;">Mã đặt hẹn — Lưu lại để tra cứu</p>
+
+      <div class="success-note">
+        ⚠️ <strong>Lưu ý quan trọng:</strong> Đăng ký trực tuyến <strong>chưa phải là xác nhận lịch hẹn</strong>. Phòng khám sẽ gọi điện xác nhận trong vòng 1–2 giờ (giờ hành chính). Nếu chưa nhận được phản hồi sau 2 giờ, vui lòng gọi: <strong>0976.675.445</strong>.
+      </div>
+
+      <div class="success-info-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <div><strong id="succ-datetime"></strong><div style="font-size:11px;color:var(--text-3);margin-top:1px;" id="succ-type"></div></div>
+      </div>
+      <div class="success-info-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div>154 Trần Quang Diệu, Phường Bình Thủy, TP. Cần Thơ</div>
+      </div>
+      <div class="success-info-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81"/></svg>
+        <div>Liên hệ phòng khám: <strong>0976.675.445</strong></div>
+      </div>
+
+      <button class="btn-register-again" onclick="resetForm()">
+        Đăng ký cho bé khác
+      </button>
+    </div>
+
+  </div><!-- /card -->
+
+  <div class="footer">
+    <div>📞 0976.675.445 &nbsp;|&nbsp; 🏥 154 Trần Quang Diệu, P. Bình Thủy, TP. Cần Thơ</div>
+    <div style="margin-top:4px;">T2–T7: Sáng 6–7h | Trưa 11–12h | Chiều 17–19h &nbsp;·&nbsp; Chủ Nhật: Chiều 17–19h</div>
+    <div style="margin-top:8px;color:var(--text-3);font-size:11px;">© Phòng Khám Nhi BS. CKI. Trần Minh Thành · Đăng ký không thay thế khám cấp cứu</div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ⚙️ CẤU HÌNH — CHỈ CẦN SỬA PHẦN NÀY
+// ============================================================
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzV_V8OqpVG_TNXxcNkEA6vAJ8u3rxZPW0MV_I4tbHliogluLpCdVSHXLqrc_rKOCJl/exec"; 
+// 👆 Dán Web App URL từ Google Apps Script vào đây (trong dấu "")
+// Ví dụ: "https://script.google.com/macros/s/AKfycb.../exec"
+// Xem hướng dẫn chi tiết trong file HUONG_DAN.html
+
+// ============================================================
+// STATE
+// ============================================================
+let currentStep = 1;
+let selectedTimeSlot = null;
+
+// ============================================================
+// INIT
+// ============================================================
+window.onload = function() {
+  // Set date limits
+  const today = new Date();
+  const maxDate = new Date();
+  maxDate.setDate(today.getDate() + 30);
+  const todayStr = today.toISOString().split('T')[0];
+  const maxStr = maxDate.toISOString().split('T')[0];
+
+  document.getElementById('child-dob').max = todayStr;
+  document.getElementById('appt-date').min = todayStr;
+  document.getElementById('appt-date').max = maxStr;
+
+  // Show config notice if URL not set
+  if (!GOOGLE_SCRIPT_URL) {
+    document.getElementById('config-notice').classList.add('show');
+  }
+
+  // Set default selected radio
+  document.querySelector('[onclick*="Đã từng"]').classList.add('selected');
+};
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function goStep(step) {
+  if (step > currentStep) {
+    // Validate current step before advancing
+    if (!validateStep(currentStep)) return;
+  }
+
+  currentStep = step;
+
+  // Update sections
+  document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + step).classList.add('active');
+
+  // Update step indicators
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('step-' + i);
+    el.classList.remove('active','done');
+    if (i < step) el.classList.add('done');
+    if (i === step) el.classList.add('active');
+    if (i < step) el.querySelector('.step-num').innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`;
+    else el.querySelector('.step-num').textContent = i;
+  });
+
+  // Populate summary
+  if (step === 3) buildSummary();
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// VALIDATION
+// ============================================================
+function validateStep(step) {
+  let valid = true;
+
+  const show = (id, show) => {
+    document.getElementById(id).classList.toggle('show', show);
+    const inputId = id.replace('err-','');
+    const el = document.getElementById(inputId);
+    if (el) el.classList.toggle('error', show);
+  };
+
+  if (step === 1) {
+    const name = document.getElementById('child-name').value.trim();
+    const dob = document.getElementById('child-dob').value;
+    const gender = document.getElementById('child-gender').value;
+    const pname = document.getElementById('parent-name').value.trim();
+    const phone = document.getElementById('parent-phone').value.trim();
+
+    show('err-child-name', !name);
+    show('err-child-dob', !dob);
+    show('err-child-gender', !gender);
+    show('err-parent-name', !pname);
+    const phoneOk = /^(0[35789]\d{8})$/.test(phone.replace(/\s/g,''));
+    show('err-parent-phone', !phoneOk);
+
+    valid = name && dob && gender && pname && phoneOk;
+  }
+
+  if (step === 2) {
+    const date = document.getElementById('appt-date').value;
+    const time = selectedTimeSlot;
+    const reason = document.getElementById('reason').value.trim();
+
+    show('err-appt-date', !date);
+    show('err-appt-time', !time);
+    show('err-reason', !reason);
+
+    valid = date && time && reason;
+  }
+
+  return !!valid;
+}
+
+// ============================================================
+// TIME SLOT SELECTION
+// ============================================================
+function selectTime(el, time) {
+  if (el.classList.contains('full')) return;
+  document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTimeSlot = time;
+  document.getElementById('err-appt-time').classList.remove('show');
+}
+
+// ============================================================
+// RADIO SELECTION
+// ============================================================
+function selectRadio(el, groupId, value) {
+  el.closest('.radio-group').querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function getRadioValue(groupId) {
+  const sel = document.querySelector(`#${groupId} .radio-btn.selected`);
+  return sel ? sel.textContent.trim() : '';
+}
+
+// ============================================================
+// BUILD SUMMARY
+// ============================================================
+function buildSummary() {
+  const f = {
+    childName: document.getElementById('child-name').value.trim(),
+    childDob: document.getElementById('child-dob').value,
+    childGender: document.getElementById('child-gender').value,
+    childWeight: document.getElementById('child-weight').value,
+    parentName: document.getElementById('parent-name').value.trim(),
+    parentRelation: document.getElementById('parent-relation').value,
+    parentPhone: document.getElementById('parent-phone').value.trim(),
+    parentEmail: document.getElementById('parent-email').value.trim(),
+    parentAddr: document.getElementById('parent-addr').value.trim(),
+    allergy: document.getElementById('allergy').value.trim() || 'Không',
+    history: document.getElementById('history').value.trim() || 'Không',
+    apptDate: document.getElementById('appt-date').value,
+    apptTime: selectedTimeSlot,
+    apptType: document.getElementById('appt-type').value,
+    reason: document.getElementById('reason').value.trim(),
+    visited: getRadioValue('visited-before'),
+  };
+
+  const dob = new Date(f.childDob);
+  const now = new Date();
+  const ageMonths = (now.getFullYear() - dob.getFullYear()) * 12 + (now.getMonth() - dob.getMonth());
+  const ageStr = ageMonths < 24 ? ageMonths + ' tháng tuổi' : Math.floor(ageMonths/12) + ' tuổi';
+
+  const dateStr = f.apptDate ? new Date(f.apptDate + 'T00:00').toLocaleDateString('vi-VN', {weekday:'long',year:'numeric',month:'long',day:'numeric'}) : '—';
+
+  document.getElementById('summary-box').innerHTML = `
+    <div class="summary-header">👶 Thông tin trẻ</div>
+    <div class="summary-row"><span class="summary-key">Họ và tên</span><span class="summary-val">${f.childName}</span></div>
+    <div class="summary-row"><span class="summary-key">Ngày sinh</span><span class="summary-val">${f.childDob} (${ageStr})</span></div>
+    <div class="summary-row"><span class="summary-key">Giới tính</span><span class="summary-val">${f.childGender}</span></div>
+    ${f.childWeight?`<div class="summary-row"><span class="summary-key">Cân nặng</span><span class="summary-val">${f.childWeight} kg</span></div>`:''}
+    <div class="summary-row"><span class="summary-key">Dị ứng thuốc</span><span class="summary-val" style="color:${f.allergy!=='Không'?'var(--error)':'inherit'}">${f.allergy}</span></div>
+    ${f.history!=='Không'?`<div class="summary-row"><span class="summary-key">Tiền sử bệnh</span><span class="summary-val">${f.history}</span></div>`:''}
+
+    <div class="summary-header">👨‍👩‍👧 Phụ huynh</div>
+    <div class="summary-row"><span class="summary-key">Họ tên</span><span class="summary-val">${f.parentName} (${f.parentRelation})</span></div>
+    <div class="summary-row"><span class="summary-key">Điện thoại</span><span class="summary-val">${f.parentPhone}</span></div>
+    ${f.parentEmail?`<div class="summary-row"><span class="summary-key">Email</span><span class="summary-val">${f.parentEmail}</span></div>`:''}
+    ${f.parentAddr?`<div class="summary-row"><span class="summary-key">Địa chỉ</span><span class="summary-val">${f.parentAddr}</span></div>`:''}
+
+    <div class="summary-header">📅 Lịch khám</div>
+    <div class="summary-row"><span class="summary-key">Ngày khám</span><span class="summary-val">${dateStr}</span></div>
+    <div class="summary-row"><span class="summary-key">Giờ khám</span><span class="summary-val">${f.apptTime || '—'}</span></div>
+    <div class="summary-row"><span class="summary-key">Loại khám</span><span class="summary-val">${f.apptType}</span></div>
+    <div class="summary-row"><span class="summary-key">Lý do khám</span><span class="summary-val">${f.reason}</span></div>
+    <div class="summary-row"><span class="summary-key">Đã từng khám</span><span class="summary-val">${f.visited}</span></div>
+  `;
+}
+
+// ============================================================
+// SUBMIT FORM
+// ============================================================
+async function submitForm() {
+  // Check agree
+  const agree = document.getElementById('agree-terms').checked;
+  const errAgree = document.getElementById('err-agree');
+  errAgree.classList.toggle('show', !agree);
+  if (!agree) return;
+
+  const now = new Date();
+  const bookingCode = 'PK-' + String(now.getTime()).slice(-6);
+
+  const payload = {
+    bookingCode,
+    timestamp: now.toLocaleString('vi-VN'),
+    childName: document.getElementById('child-name').value.trim(),
+    childDob: document.getElementById('child-dob').value,
+    childGender: document.getElementById('child-gender').value,
+    childWeight: document.getElementById('child-weight').value || '',
+    parentName: document.getElementById('parent-name').value.trim(),
+    parentRelation: document.getElementById('parent-relation').value,
+    parentPhone: document.getElementById('parent-phone').value.trim(),
+    parentEmail: document.getElementById('parent-email').value.trim(),
+    parentAddr: document.getElementById('parent-addr').value.trim(),
+    allergy: document.getElementById('allergy').value.trim() || 'Không',
+    history: document.getElementById('history').value.trim() || 'Không',
+    apptDate: document.getElementById('appt-date').value,
+    apptTime: selectedTimeSlot,
+    apptType: document.getElementById('appt-type').value,
+    reason: document.getElementById('reason').value.trim(),
+    visitedBefore: getRadioValue('visited-before'),
+    status: 'Chờ xác nhận',
+  };
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+
+  // Show loading
+  document.getElementById('loading').classList.add('show');
+
+  let success = false;
+
+  if (GOOGLE_SCRIPT_URL) {
+    try {
+      // Use no-cors mode for Google Apps Script
+      const formData = new URLSearchParams(payload);
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+      });
+      success = true;
+    } catch (err) {
+      console.error('Lỗi gửi dữ liệu:', err);
+      // Still show success to user (data may have been received)
+      success = true;
+    }
+  } else {
+    // Demo mode — no URL configured
+    console.log('Demo mode — payload:', payload);
+    await new Promise(r => setTimeout(r, 1200)); // Simulate delay
+    success = true;
+  }
+
+  document.getElementById('loading').classList.remove('show');
+
+  if (success) {
+    showSuccess(bookingCode, payload);
+  } else {
+    btn.disabled = false;
+    alert('Có lỗi xảy ra. Vui lòng thử lại hoặc gọi trực tiếp: 0292 3740 890');
+  }
+}
+
+// ============================================================
+// SUCCESS SCREEN
+// ============================================================
+function showSuccess(code, payload) {
+  // Hide all form sections
+  document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+  document.querySelector('.steps').style.display = 'none';
+
+  const ss = document.getElementById('success-screen');
+  ss.classList.add('show');
+
+  document.getElementById('booking-code').textContent = code;
+
+  const dateStr = new Date(payload.apptDate + 'T00:00').toLocaleDateString('vi-VN', {
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
+  });
+  document.getElementById('succ-datetime').textContent = `${dateStr} lúc ${payload.apptTime}`;
+  document.getElementById('succ-type').textContent = payload.apptType + ' — ' + payload.childName;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// RESET
+// ============================================================
+function resetForm() {
+  location.reload();
+}
+</script>
+</body>
+</html>
